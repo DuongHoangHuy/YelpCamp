@@ -2,9 +2,8 @@ const express = require('express')
 const mongoose = require('mongoose')
 const path = require('path')
 const Campground = require('./models/campground')
-
 const app = express()
-//Initial connection
+//Initial Connection
 mongoose.connect('mongodb://localhost:27017/yelp-camp')
 
 //handle errors after initial connection
