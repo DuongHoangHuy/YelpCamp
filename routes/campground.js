@@ -24,29 +24,41 @@ router.get('/new', (req, res)=>{
 })
 
 router.post('/',validateCampground ,asyncHandler(async (req, res)=>{
-    if(!req.body.campground) throw new ExpressError('Invalid Campground Data', 400)
     const campground = new Campground(req.body.campground)
     await campground.save()
+    req.flash('success', 'Successfully make a new campground')
     res.redirect(`/campgrounds/${campground._id}`)
 }))
 
-router.get('/:id', asyncHandler(async (req, res)=>{
-    const campground = await Campground.findById(req.params.id).populate('reviews')
-    res.render('campgrounds/show', { campground })
-}))
+router.get('/:id', async(req, res)=>{
+    try {
+        const campground = await Campground.findById(req.params.id).populate('reviews')
+        res.render('campgrounds/show', { campground })
+    }catch(e){
+        req.flash('error', 'Can not find that campground')
+        res.redirect('/campgrounds')
+    }
+})
 
 router.get('/:id/edit', asyncHandler(async (req, res)=>{
-    const campground = await Campground.findById(req.params.id)
-    res.render('campgrounds/edit', { campground })
+    try {
+        const campground = await Campground.findById(req.params.id)
+        res.render('campgrounds/edit', { campground })
+    }catch(e){
+        req.flash('error', 'Can not find that campground')
+        res.redirect('/campgrounds')
+    }
 }))
 
 router.put('/:id',validateCampground, asyncHandler(async (req, res)=>{
     await Campground.findByIdAndUpdate(req.params.id, req.body.campground)
+    req.flash('success', 'Successfully update')
     res.redirect(`/campgrounds/${req.params.id}`)
 }))
 
 router.delete('/:id', asyncHandler(async (req, res)=>{
     await Campground.findByIdAndDelete(req.params.id)
+    req.flash('success', 'Successfully delete')
     res.redirect('/campgrounds')
 }))
 

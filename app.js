@@ -6,6 +6,8 @@ const ejsMate = require('ejs-mate')
 const ExpressError = require('./utils/ExpressError')
 const campgroundRoute = require('./routes/campground')
 const reviewRoute = require('./routes/review')
+const session = require('express-session')
+const flash = require('connect-flash')
 const app = express()
 
 //I__________________CONNECTION______________________
@@ -25,7 +27,23 @@ app.use(express.urlencoded({extended: true}))
 app.use(methodOverride('_method'))
 app.use(express.static(path.join(__dirname, 'public')))
 app.engine('ejs', ejsMate)
-
+const sessionConfig = {
+    secret: 'thisisasecret',
+    resave: false,
+    saveUninitialized: true,
+    cookies:{
+        httpOnly: true,
+        expires: Date.now()+1000*60*60*24*7,
+        maxAge: 1000*60*60*24*7
+    }
+}
+app.use(session(sessionConfig))
+app.use(flash())
+app.use((req, res, next)=>{
+    res.locals.success = req.flash('success')
+    res.locals.error = req.flash('error')
+    next()
+})
 
 app.get('/', (req, res)=>{
     res.render('home.ejs')
