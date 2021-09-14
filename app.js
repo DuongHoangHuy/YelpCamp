@@ -6,8 +6,12 @@ const ejsMate = require('ejs-mate')
 const ExpressError = require('./utils/ExpressError')
 const campgroundRoute = require('./routes/campground')
 const reviewRoute = require('./routes/review')
+const userRoute = require('./routes/user')
 const session = require('express-session')
 const flash = require('connect-flash')
+const User = require('./models/user')
+const passport = require('passport')
+const LocalStrategy = require('passport-local')
 const app = express()
 
 //I__________________CONNECTION______________________
@@ -31,7 +35,7 @@ const sessionConfig = {
     secret: 'thisisasecret',
     resave: false,
     saveUninitialized: true,
-    cookies:{
+    cookie: {
         httpOnly: true,
         expires: Date.now()+1000*60*60*24*7,
         maxAge: 1000*60*60*24*7
@@ -39,16 +43,26 @@ const sessionConfig = {
 }
 app.use(session(sessionConfig))
 app.use(flash())
+//__________________PASSPORT______________
+app.use(passport.initialize())
+app.use(passport.session())
+passport.use(new LocalStrategy(User.authenticate())); // Create new method
+passport.serializeUser(User.serializeUser()); // How to store user in session
+passport.deserializeUser(User.deserializeUser());
+
 app.use((req, res, next)=>{
+    res.locals.currentUser = req.user
     res.locals.success = req.flash('success')
     res.locals.error = req.flash('error')
     next()
 })
 
+//__________________ROUTES_________________
 app.get('/', (req, res)=>{
     res.render('home.ejs')
 })
-//__________________ROUTES_________________
+
+app.use('/', userRoute)
 app.use('/campgrounds', campgroundRoute)
 app.use('/campgrounds/:id/reviews', reviewRoute)
 
