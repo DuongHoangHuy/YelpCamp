@@ -8,7 +8,7 @@ module.exports.isLoggedIn = (req, res, next)=>{
         req.session.returnTo = req.originalUrl
         req.flash('error', 'You must be logged in first')
         return res.redirect('/login')
-    }
+    }   
     next()
 }
 
@@ -31,7 +31,7 @@ module.exports.isAuthor = async (req, res, next)=>{
     next()
 }
 
-module.exports.isReviewAuthor = async (req, res, next)=>{ 
+module.exports.isReviewAuthor = async (req, res, next)=>{
     const {id, reviewId} = req.params
     const review = await Review.findById(reviewId)
     if(!review.author.equals(req.user._id)){
