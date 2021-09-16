@@ -1,54 +1,65 @@
 <% layout('/layouts/boilerplate') -%>
-<div class="row">
-    <h1 class="text-center">Edit campground</h1>
-    <div class="col-6 offset-3">
-        <form action="/campgrounds/<%= campground._id %>?_method=PUT" method="POST" class="validated-form" novalidate>
-            <div class="mb-3">
-                <label class="form-label" for="title">Title </label>
-                <input class="form-control" type="text" name="campground[title]" 
-                    id="title" required value="<%= campground.title %>">
-                <div class="valid-feedback">Looks good!</div>
-                <div class="invalid-feedback">Please input a title</div>
-            </div>
-            
-            <div class="mb-3">
-                <label class="form-label" for="location">Location </label>
-                <input class="form-control" type="text" name="campground[location]" 
-                    id="location" required value="<%= campground.location %>">
-                <div class="valid-feedback">Looks good!</div>
-                <div class="invalid-feedback">Please input a location</div>
-            </div>
-            
-            <div class="mb-3">
-                <label class="form-label" for="price">Price</label>
-                <div class="input-group mb-3">
-                    <span class="input-group-text">$</span>
-                    <input class="form-control" type="number" min="0" name="campground[price]" 
-                        placeholder="0.00" required value="<%= campground.price %>">
+    <div class="row">
+        <h1 class="text-center">Edit campground</h1>
+        <div class="col-6 offset-3">
+            <form action="/campgrounds/<%= campground._id %>?_method=PUT" method="POST" enctype="multipart/form-data"
+                class="validated-form" novalidate>
+                <div class="mb-3">
+                    <label class="form-label" for="title">Title </label>
+                    <input class="form-control" type="text" name="campground[title]" id="title" required
+                        value="<%= campground.title %>">
                     <div class="valid-feedback">Looks good!</div>
-                    <div class="invalid-feedback">Please input a price </div>
+                    <div class="invalid-feedback">Please input a title</div>
                 </div>
-            </div>
-            
-            <div class="mb-3">
-                <label class="form-label" for="image">Image URL </label>
-                <input class="form-control" type="text" name="campground[image]" 
-                    id="image" required value="<%= campground.image %>">
-                <div class="valid-feedback">Looks good!</div>
-                <div class="invalid-feedback">Please input a image url</div>
-            </div>
-            
-            <div class="mb-3">
-                <label class="form-label" for="description">Description </label>
-                <textarea class="form-control" type="text" name="campground[description]" id="description" required><%= campground.description %></textarea>
-                <div class="valid-feedback">Looks good!</div>
-                <div class="invalid-feedback">Please input a description</div>
-            </div>
-            
-            <div class="mb-3">
-                <button class="btn btn-success" type="submit">Add campground</button>
-            </div>
-        </form>
-        <a href="/campgrounds">All campgrounds</a>
+
+                <div class="mb-3">
+                    <label class="form-label" for="location">Location </label>
+                    <input class="form-control" type="text" name="campground[location]" id="location" required
+                        value="<%= campground.location %>">
+                    <div class="valid-feedback">Looks good!</div>
+                    <div class="invalid-feedback">Please input a location</div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label" for="price">Price</label>
+                    <div class="input-group mb-3">
+                        <span class="input-group-text">$</span>
+                        <input class="form-control" type="number" min="0" name="campground[price]" placeholder="0.00"
+                            required value="<%= campground.price %>">
+                        <div class="valid-feedback">Looks good!</div>
+                        <div class="invalid-feedback">Please input a price </div>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label" for="image">Images</label>
+                    <input class="form-control" type="file" name="image" id="image" multiple required>
+                    <div class="valid-feedback">Looks good!</div>
+                    <div class="invalid-feedback">Please input a image url</div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label" for="description">Description </label>
+                    <textarea class="form-control" type="text" name="campground[description]" id="description"
+                        required><%= campground.description %></textarea>
+                    <div class="valid-feedback">Looks good!</div>
+                    <div class="invalid-feedback">Please input a description</div>
+                </div>
+                
+                <div class="mb-3">
+                    <h5>Delete</h5>
+                    <% campground.images.forEach((img, i)=> { %>
+                        <div class="mb-3 d-inline">
+                            <input type="checkbox" name="deleteImages[]" value="<%= img.filename %>">
+                            <img src="<%= img.url %> " height="100" width="auto">
+                        </div>
+                    <% }) %>
+                </div>
+
+                <div class="mb-3">
+                    <button class="btn btn-success" type="submit">Update campground</button>
+                </div>
+            </form>
+            <a href="/campgrounds">All campgrounds</a>
+        </div>
     </div>
-</div>
