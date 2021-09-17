@@ -16,10 +16,13 @@ const flash = require('connect-flash')
 const User = require('./models/user')
 const passport = require('passport')
 const LocalStrategy = require('passport-local')
+const MongoStore = require('connect-mongo');
 const app = express()
 
 //I__________________CONNECTION______________________
-mongoose.connect('mongodb://localhost:27017/yelp-camp')
+// 'mongodb://localhost:27017/yelp-camp'
+const dbUrl = process.env.DB_URL ||'mongodb://localhost:27017/yelp-camp'
+mongoose.connect(dbUrl)
 
 //handle errors after initial connection
 const db = mongoose.connection
@@ -35,8 +38,19 @@ app.use(express.urlencoded({extended: true}))
 app.use(methodOverride('_method'))
 app.use(express.static(path.join(__dirname, 'public')))
 app.engine('ejs', ejsMate)
+
+const secret = process.env.SECRET || 'thisisasecret'
+
+const store = new MongoStore({
+    mongoUrl: dbUrl,
+    secret,
+    // resave: false, //don't save session if unmodified
+    touchAfter: 24 * 3600 // time period in seconds to resave
+})
+
 const sessionConfig = {
-    secret: 'thisisasecret',
+    store,
+    secret,
     resave: false,
     saveUninitialized: true,
     cookie: {
