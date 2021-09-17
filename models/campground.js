@@ -3,6 +3,7 @@ const { campgroundSchema } = require('../schemas')
 const Review = require('./review')
 const {Schema} = mongoose
 
+const opts = {toJSON: {virtuals: true}}
 const CampgroundSchema = new Schema({
     title: String,
     price: Number,
@@ -35,6 +36,10 @@ const CampgroundSchema = new Schema({
             ref: 'Review'
         }
     ]
+}, opts)
+
+CampgroundSchema.virtual('properties.popUpText').get( function(){
+    return `<b><p><a href="/campgrounds/${this._id}">${this.title}</a></p></b><br><p>${this.description.substring(0, 25)}...</p>`
 })
 
 //Query middleware
