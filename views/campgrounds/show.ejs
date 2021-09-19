@@ -1,6 +1,9 @@
 <% layout('/layouts/boilerplate') -%>
-  <link rel="stylesheet" href="/styles/star.css">
-
+<% function ratioOfRating(num, reviews){ %>
+  <% if(!reviews.length) return 0%> 
+  <% return Math.round((reviews.filter(el => el.rating === num).length/reviews.length)*100) %>
+<% } %>
+<link rel="stylesheet" href="/styles/star.css">
   <div class="row mb-3">
     <div class="col-6">
       <div class="card">
@@ -57,8 +60,30 @@
       </div>
     </div>
 
+
+
+<!-- map & reviews -->
     <div class="col-6">
-      <div id='map' style='width: 400px; height: 300px;'></div>
+      <!-- map -->
+      <div id='map' style='width: 100%; height: 20rem mb-3'></div>
+      <!-- overview -->
+      <div class="card mt-3">
+        <div class="row mt-4">
+          <h3 class="card-title">Customer feedback</h3>
+          <div class="col-6 d-flex justify-content-center align-items-center">
+            <h1 class="fs-1 text-warning"><%= averageRating%>&#9733;</h1>
+          </div>
+          <div class="col-6">
+            <div class="text-warning fs-4">	&#9733;&#9733;&#9733;&#9733;&#9733;<span class="text-dark fs-5"><%= ratioOfRating(5, campground.reviews) %>%</span></div>
+            <div class="text-warning fs-4">	&#9733;&#9733;&#9733;&#9733;&#9734;<span class="text-dark fs-5"><%= ratioOfRating(4, campground.reviews) %>%</span></div>
+            <div class="text-warning fs-4">	&#9733;&#9733;&#9733;&#9734;&#9734;<span class="text-dark fs-5"><%= ratioOfRating(3, campground.reviews) %>%</span></div>
+            <div class="text-warning fs-4">	&#9733;&#9733;&#9734;&#9734;&#9734;<span class="text-dark fs-5"><%= ratioOfRating(2, campground.reviews) %>%</span></div>
+            <div class="text-warning fs-4">	&#9733;&#9734;&#9734;&#9734;&#9734;<span class="text-dark fs-5"><%= ratioOfRating(1, campground.reviews) %>%</span></div>
+          </div>
+        </div>
+      </div>
+    
+      <!-- overview -->
       <% if(currentUser){ %>
         <h2>Leave a review</h2>
         <form action="/campgrounds/<%= campground._id %>/reviews" method="POST" class="mb-3 validated-form" novalidate>
@@ -77,19 +102,18 @@
             <label for="first-rate5" title="Amazing">5 stars</label>
           </fieldset>
           <div class="mb-3">
-            <label class="form-label" for="review">Review</label>
             <textarea class="form-control" name="review[body]" id="review" cols="30" rows="4" required></textarea>
           </div>
-          <button class="btn btn-success" type="submit">Submit</button>
+          <button type="submit" class="btn btn-success btn-sm">Send</button>
         </form>
         <% } %>
 
           <% for(review of campground.reviews){ %>
             <div class="card mb-3">
               <div class="card-body">
-                <h5 class="card-title">
+                <h4 class="card-title">
                   <%= review.author.username %>
-                </h5>
+                </h4>
                 <p class="starability-result" data-rating="<%= review.rating %>"></p>
                 <p class="card-text">
                   <%= review.body %>
@@ -97,7 +121,7 @@
                 <% if(currentUser && currentUser._id.equals(review.author._id)) { %>
                   <form action="/campgrounds/<%= campground._id %>/reviews/<%= review._id %>?_method=DELETE"
                     method="POST">
-                    <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                    <button type="submit" class="btn btn-danger btn-sm">Delete reviews</button>
                   </form>
                   <% } %>
               </div>

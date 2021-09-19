@@ -38,9 +38,21 @@ const CampgroundSchema = new Schema({
     ]
 }, opts)
 
+CampgroundSchema.virtual('averageRating').get(async function(){
+    const campground = await this.populate('reviews')
+    const reviews = campground.reviews
+    let sum = 0
+    if(reviews && reviews.length){
+        reviews.forEach(el =>{sum += el.rating})
+        sum /= reviews.length
+    }
+    return Math.round(sum*10)/10
+})
+
 CampgroundSchema.virtual('properties.popUpText').get( function(){
     return `<b><p><a href="/campgrounds/${this._id}">${this.title}</a></p></b><br><p>${this.description.substring(0, 25)}...</p>`
 })
+
 
 //Query middleware
 CampgroundSchema.post('findOneAndDelete', async function(campground){
