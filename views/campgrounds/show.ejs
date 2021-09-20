@@ -4,10 +4,11 @@
   <% return Math.round((reviews.filter(el => el.rating === num).length/reviews.length)*100) %>
 <% } %>
 <link rel="stylesheet" href="/styles/star.css">
+
+<!-------------------------------------------------------------------------------- -->
   <div class="row mb-3">
     <div class="col-6">
       <div class="card">
-
         <div id="campgroundCrousel" class="carousel slide" data-bs-ride="carousel">
           <div class="carousel-inner">
             <% campground.images.forEach((img, i)=>{ %>
@@ -29,7 +30,6 @@
             </button>
             <% } %>
         </div>
-
         <div class="card-body">
           <h5 class="card-title">
             <%= campground.title %>
@@ -48,15 +48,15 @@
         </ul>
         <% if(currentUser && currentUser._id.equals(campground.author._id)) { %>
           <div class="card-body">
-            <a class="btn btn-info" href="/campgrounds/<%= campground.id %>/edit" class="card-link">Edit</a>
+            <a class="btn btn-outline-info" href="/campgrounds/<%= campground.id %>/edit" class="card-link"><i class="far fa-edit"></i> Edit</a>
             <form class="d-inline" action="/campgrounds/<%= campground._id %>?_method=DELETE" method="POST">
-              <button class="btn btn-danger" type="submit">Delete</button>
+              <button class="btn btn-outline-danger" type="submit"><i class="far fa-trash-alt"></i> Delete</button>
             </form>
           </div>
-          <% } %>
+        <% } %>
       </div>
       <div class="card-footer text-muted">
-        2 days ago <a href="/campgrounds">All campgrounds</a>
+        2 days ago
       </div>
     </div>
 
@@ -66,10 +66,9 @@
     <div class="col-6">
       <!-- map -->
       <div id='map' style='width: 100%; height: 20rem mb-3'></div>
-      <!-- overview -->
+      <!-- Overview -->
       <div class="card mt-3">
         <div class="row mt-4">
-          <h3 class="card-title">Customer feedback</h3>
           <div class="col-6 d-flex justify-content-center align-items-center">
             <h1 class="fs-1 text-warning"><%= averageRating%>&#9733;</h1>
           </div>
@@ -82,14 +81,15 @@
           </div>
         </div>
       </div>
-    
-      <!-- overview -->
+      <!-- /Overview -->
+
+      <!-- Add reviews -->
       <% if(currentUser){ %>
-        <h2>Leave a review</h2>
         <form action="/campgrounds/<%= campground._id %>/reviews" method="POST" class="mb-3 validated-form" novalidate>
+          <h2>Leave a review</h2>
           <fieldset class="starability-basic">
             <input type="radio" id="no-rate" class="input-no-rate" name="review[rating]" value="1" checked
-              aria-label="No rating." />
+              aria-label="No rating."/>
             <input type="radio" id="first-rate1" name="review[rating]" value="1" />
             <label for="first-rate1" title="Terrible">1 star</label>
             <input type="radio" id="first-rate2" name="review[rating]" value="2" />
@@ -101,32 +101,53 @@
             <input type="radio" id="first-rate5" name="review[rating]" value="5" />
             <label for="first-rate5" title="Amazing">5 stars</label>
           </fieldset>
-          <div class="mb-3">
+          <div class="input-group">
             <textarea class="form-control" name="review[body]" id="review" cols="30" rows="4" required></textarea>
+            <button type="submit" class="btn btn-outline-success"><i class="far fa-paper-plane"></i></button>
           </div>
-          <button type="submit" class="btn btn-success btn-sm">Send</button>
         </form>
         <% } %>
+        <!-- /Add reviews -->
 
-          <% for(review of campground.reviews){ %>
-            <div class="card mb-3">
-              <div class="card-body">
-                <h4 class="card-title">
-                  <%= review.author.username %>
-                </h4>
-                <p class="starability-result" data-rating="<%= review.rating %>"></p>
-                <p class="card-text">
-                  <%= review.body %>
-                </p>
-                <% if(currentUser && currentUser._id.equals(review.author._id)) { %>
-                  <form action="/campgrounds/<%= campground._id %>/reviews/<%= review._id %>?_method=DELETE"
-                    method="POST">
-                    <button type="submit" class="btn btn-danger btn-sm">Delete reviews</button>
-                  </form>
-                  <% } %>
+        <!-- Search rating -->
+        <div class="row mb-3">
+          <div class="col-4">
+            <form action="/campgrounds/<%= campground._id %>" method="GET">
+              <div class="input-group">
+                <select class="form-select" name="rating" aria-label="Example select with button addon">
+                  <option value=""> All reviews</option>
+                    <option value="1" <%= ratingSelect===1?'selected':''%> >1</option>
+                    <option value="2" <%= ratingSelect===2?'selected':''%> >2</option>
+                    <option value="3" <%= ratingSelect===3?'selected':''%> >3</option>
+                    <option value="4" <%= ratingSelect===4?'selected':''%> >4</option>
+                    <option value="5" <%= ratingSelect===5?'selected':''%> >5</option>
+                </select>
+                <button class="btn btn-outline-secondary"><i class="fa fa-search"></i></button>
               </div>
+            </form>
+          </div>
+        </div>
+        <!-- /Search rating -->
+
+        <!-- Reviews -->
+        <% for(review of reviews){ %>
+          <div class="card border-dark mb-3">
+            <div class="card-header">
+              <h4><%= review.author.username %></h4>
             </div>
-            <% } %>
+            <div class="card-body text-dark">
+              <h5 class="starability-result card-title" data-rating="<%= review.rating %>"></h5>
+              <p class="card-text"><%= review.body %></p>
+              <% if(currentUser && currentUser._id.equals(review.author._id)) { %>
+                <form action="/campgrounds/<%= campground._id %>/reviews/<%= review._id %>?_method=DELETE"
+                  method="POST">
+                  <button type="submit" class="btn btn-outline-danger btn-sm"><i class="far fa-trash-alt"></i> Delete reviews</button>
+                </form>
+                <% } %>
+            </div>
+          </div>
+          <% } %>
+          <!-- /Reviews -->
     </div>
   </div>
 

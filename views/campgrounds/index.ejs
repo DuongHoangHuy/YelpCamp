@@ -13,12 +13,14 @@
             <form action="/campgrounds" method="GET">
                 <div class="input-group mb-3">
                     <input type="text" class="form-control" name="title" placeholder="Search..." >
-                    <span class="input-group-text" id="basic-addon2"><i class="fa fa-search"></i></span>
+                    <button class="btn btn-outline-secondary"><i class="fa fa-search"></i></button>
                   </div>
             </form>
         </div>
     </div>
 </div>
+
+<!-- Search bar -->
 <% if(search){ %> 
     <% if(!lengthAfter){ %>
         <h3 class="text-muted text-center">Sorry we can not found</h3>
@@ -27,6 +29,8 @@
     <% } %> 
 <% } %> 
 <%  %> 
+<!-- /Search bar -->
+
 <% campgrounds.forEach((campground, i)=>{%>
     <a href="/campgrounds/<%= campground._id %>" class="text-decoration-none text-dark">
         <div class="card mb-3">
@@ -47,7 +51,10 @@
                         <p class="card-text">
                             <%= campground.description.substring(0,200)%> <%= campground.description.length > 200?'...':'' %> 
                         </p>
-                        <p class="text-end fs-4"><%= averageRatings[i] %> <span class="text-warning">&#9733</span> (<%= campground.reviews.length %> reviews) </p>
+                        <p class="fs-4"><b>$<%= campground.price %></b> / night</p>
+                        <p class="text-end fs-4"><%= averageRatings[i] %> <span class="text-warning"><i class="fas fa-star"></i></span>
+                            <span class="text-muted fs-5">(<%= campground.reviews.length %> reviews)</span>
+                        </p>
                     </div>
                 </div>
             </div>

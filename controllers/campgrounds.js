@@ -1,12 +1,13 @@
 const Campground = require('../models/campground')
 const { campgroundSchema } = require('../schemas')
 const { cloudinary }  = require('../cloudinary');
-const mbxGeocoding = require("@mapbox/mapbox-sdk/services/geocoding")
+const mbxGeocoding = require("@mapbox/mapbox-sdk/services/geocoding");
+const campground = require('../models/campground');
 const mapBoxToken = process.env.MAPBOX_TOKEN
 const geocoder = mbxGeocoding({accessToken: mapBoxToken})
 
 module.exports.renderIndex = async (req, res) => {
-    let campgrounds = await Campground.find({})
+    let campgrounds = await Campground.find({}).populate('reviews','rating')
     const lengthBefore = campgrounds.length
     let lengthAfter, search = false
     if(req.query.title !== undefined && req.query.title !== ''){
@@ -17,11 +18,7 @@ module.exports.renderIndex = async (req, res) => {
     }else{
         lengthAfter = lengthBefore
     }
-    let averageRatings = []
-    const getRating = campgrounds.map(el => el.averageRating)
-    for await (let data of getRating){ // await data 
-        averageRatings.push(data)
-    }
+    let averageRatings = campgrounds.map(campground => calAverageRating(campground))
     res.render('campgrounds/index', { campgrounds, lengthAfter, lengthBefore, search, averageRatings })
 }
 
@@ -45,18 +42,21 @@ module.exports.createCampground = async (req, res) => {
 
 module.exports.renderShowForm = async (req, res) => {
     try {
-        let campground = await Campground.findById(req.params.id)
-        const averageRating = await campground.averageRating
-        campground = await campground.populate({
+        let campground = await Campground.findById(req.params.id).populate({
             path: 'reviews',
             populate: {
                 path: 'author'
             }
+        }).populate('author')
+        let reviews = campground.reviews
+        const ratingSelect = parseInt(req.query.rating)
+        if(ratingSelect >= 1 && ratingSelect <= 5){
+            reviews = reviews.filter(review => review.rating === ratingSelect)
         }
-        )
-        res.render('campgrounds/show', { campground, averageRating})
+        const averageRating = calAverageRating(campground)
+        res.render('campgrounds/show', { campground, averageRating, reviews, ratingSelect})
     } catch (e) {
-        req.flash('error', 'Can not find that campground')
+        req.flash('error', e.message)
         res.redirect('/campgrounds')
     }
 }
@@ -92,4 +92,15 @@ module.exports.deleteCampground = async (req, res) => {
     await Campground.findByIdAndDelete(req.params.id)
     req.flash('success', 'Successfully delete')
     res.redirect('/campgrounds')
+}
+
+//________________FUNCTION__________________
+function calAverageRating(campground){
+    const reviews = campground.reviews
+    let sum = 0
+    if(reviews && reviews.length){
+        reviews.forEach(el =>{sum += el.rating})
+        sum /= reviews.length
+    }
+    return Math.round(sum*10)/10
 }

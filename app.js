@@ -17,6 +17,7 @@ const User = require('./models/user')
 const passport = require('passport')
 const LocalStrategy = require('passport-local')
 const MongoStore = require('connect-mongo');
+const mongoSanitize = require('express-mongo-sanitize');
 const app = express()
 
 //I__________________CONNECTION______________________
@@ -62,6 +63,8 @@ const sessionConfig = {
 }
 app.use(session(sessionConfig))
 app.use(flash())
+// Securtity: NO SQL injection
+app.use(mongoSanitize());
 //__________________PASSPORT______________
 app.use(passport.initialize())
 app.use(passport.session())

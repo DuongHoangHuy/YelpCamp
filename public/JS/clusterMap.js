@@ -1,9 +1,9 @@
 mapboxgl.accessToken = mapToken;
 const map = new mapboxgl.Map({
-container: 'cluster-map',
-style: 'mapbox://styles/mapbox/dark-v10',
-center: [-103.5917, 40.6699],
-zoom: 3
+    container: 'cluster-map',
+    style: 'mapbox://styles/mapbox/light-v10',
+    center: [-103.5917, 40.6699],
+    zoom: 3
 });
  
 const nav = new mapboxgl.NavigationControl({
@@ -39,11 +39,11 @@ map.on('load', () => {
         'circle-color': [
             'step',
             ['get', 'point_count'],
-            '#dfe3ee',
+            '#ffdc73',
             20,
-            '#8b9dc3',
+            '#ffbf00',
             50,
-            '#3b5998'
+            '#a67c00'
         ],
         'circle-radius': [
             'step',
