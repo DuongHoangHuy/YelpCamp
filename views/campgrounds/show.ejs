@@ -39,12 +39,15 @@
           </p>
         </div>
         <ul class="list-group list-group-flush">
-          <li class="list-group-item">Contributed by: <%= campground.author.username %>
-          </li>
-          <li class="list-group-item text-muted">
+          
+          <li class="list-group-item">
+            <i class="fas fa-map-marked-alt"></i>
             <%= campground.location %>
           </li>
-          <li class="list-group-item">$<%= campground.price %> /night</li>
+          <li class="list-group-item"><b>$<%= campground.price %></b> / night</li>
+          <li class="list-group-item text-muted">
+            Contributed by: <%= campground.author.username %>
+          </li>
         </ul>
         <% if(currentUser && currentUser._id.equals(campground.author._id)) { %>
           <div class="card-body">
