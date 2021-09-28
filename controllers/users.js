@@ -9,7 +9,7 @@ module.exports.registerUser = async (req, res, next)=>{
         const {username, password, email} = req.body
         const user = new User({username, email})
         const newUser = await User.register(user, password)
-        req.login(newUser, (err)=>{                  // Log in after register
+        req.login(newUser, (err)=>{//passport                // Log in after register
             if(err) return next(err)
             req.flash('success', 'Welcome to Yelpcamp')
             res.redirect('/campgrounds')

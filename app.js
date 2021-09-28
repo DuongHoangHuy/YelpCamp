@@ -15,10 +15,11 @@ const session = require('express-session')
 const flash = require('connect-flash')
 const User = require('./models/user')
 const passport = require('passport')
-const LocalStrategy = require('passport-local')
+const LocalStrategy = require('passport-local') //Strategy for login by username+passord
 const MongoStore = require('connect-mongo');
 const mongoSanitize = require('express-mongo-sanitize');
 const helmet = require('helmet')
+const GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
 const app = express()
 
 //I__________________CONNECTION______________________
@@ -126,14 +127,16 @@ app.use(
 
 
 //__________________PASSPORT______________
-app.use(passport.initialize())
-app.use(passport.session())
-passport.use(new LocalStrategy(User.authenticate())); // Create new method
-passport.serializeUser(User.serializeUser()); // How to store user in session
-passport.deserializeUser(User.deserializeUser());
+app.use(passport.initialize()) //passport
+app.use(passport.session()) //passport
+passport.use(new LocalStrategy(User.authenticate())); // passport-local-mongoose
+passport.serializeUser(User.serializeUser()); // passport-local-mongoose
+passport.deserializeUser(User.deserializeUser());// passport-local-mongoose
+
+
 
 app.use((req, res, next)=>{
-    res.locals.currentUser = req.user
+    res.locals.currentUser = req.user 
     res.locals.success = req.flash('success')
     res.locals.error = req.flash('error')
     next()
@@ -158,7 +161,7 @@ app.use((err, req, res, next)=>{
     res.status(statusCode).render('error', {message, statusCode, err})
 })
 
-const port = process.env.PORT || 3000
+const port = process.env.PORT || 8000
 app.listen(port, ()=>{
     console.log(`Listening port ${port}`)
 })
