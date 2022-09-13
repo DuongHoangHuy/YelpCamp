@@ -4,7 +4,7 @@ const asyncHandler = require('../utils/asyncHandler')
 const { isLoggedIn, isAuthor, validateCampground } = require('../middleware')
 const campgrounds = require('../controllers/campgrounds')
 const multer = require('multer')
-const { storage } = require('../cloudinary')
+const { storage } = require('../config/cloudinary')
 const router = express.Router()
 
 const upload = multer({ storage })
