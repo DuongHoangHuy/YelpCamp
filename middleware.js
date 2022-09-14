@@ -3,11 +3,13 @@ const Review = require('./models/review')
 const ExpressError = require('./utils/ExpressError')
 const {campgroundSchema, reviewSchema} = require('./schemas')
 
+const CURRENT_VERSION = process.env.CURRENT_VERSION
+
 module.exports.isLoggedIn = (req, res, next)=>{
     if(!req.isAuthenticated()){
         req.session.returnTo = req.originalUrl
         req.flash('error', 'You must be logged in first')
-        return res.redirect('/login')
+        return res.redirect(`/${CURRENT_VERSION}/login`)
     }   
     next()
 }
@@ -26,7 +28,7 @@ module.exports.isAuthor = async (req, res, next)=>{
     const campground = await Campground.findById(id)
     if(!campground.author.equals(req.user._id)){
         req.flash('error', "You don't have permission to do that")
-        return res.redirect('/campgrounds')
+        return res.redirect(`/${CURRENT_VERSION}/campgrounds`)
     }
     next()
 }
@@ -36,7 +38,7 @@ module.exports.isReviewAuthor = async (req, res, next)=>{
     const review = await Review.findById(reviewId)
     if(!review.author.equals(req.user._id)){
         req.flash('error', "You don't have permission to do that")
-        return res.redirect(`/campgrounds/${id}`)
+        return res.redirect(`/${CURRENT_VERSION}/campgrounds/${id}`)
     }
     next()
 }

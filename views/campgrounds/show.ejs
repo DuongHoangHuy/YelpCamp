@@ -13,9 +13,9 @@
           <div class="carousel-inner">
             <% campground.images.forEach((img, i)=>{ %>
               <div class="carousel-item <%= !i?'active':'' %>  ">
-                <img src="<%= img.url %> " class="d-block w-100" alt="...">
+                <img src="<%= img.url %> " class="d-block w-100" height=400>
               </div>
-              <% }) %>
+            <% }) %>
           </div>
           <% if(campground.images.length> 1){ %>
             <button class="carousel-control-prev" type="button" data-bs-target="#campgroundCrousel"
@@ -51,8 +51,8 @@
         </ul>
         <% if(currentUser && currentUser._id.equals(campground.author._id)) { %>
           <div class="card-body">
-            <a class="btn btn-outline-info" href="/campgrounds/<%= campground.id %>/edit" class="card-link"><i class="far fa-edit"></i> Edit</a>
-            <form class="d-inline" action="/campgrounds/<%= campground._id %>?_method=DELETE" method="POST">
+            <a class="btn btn-outline-info" href="/<%= currentVersion %>/campgrounds/<%= campground.id %>/edit" class="card-link"><i class="far fa-edit"></i> Edit</a>
+            <form class="d-inline" action="/<%= currentVersion %>/campgrounds/<%= campground._id %>?_method=DELETE" method="POST">
               <button class="btn btn-outline-danger" type="submit"><i class="far fa-trash-alt"></i> Delete</button>
             </form>
           </div>
@@ -70,25 +70,22 @@
       <!-- map -->
       <div id='map' style='width: 100%; height: 20rem mb-3'></div>
       <!-- Overview -->
-      <div class="card mt-3">
         <div class="row mt-4">
+          <h2>Ratings</h2> 
           <div class="col-6 d-flex justify-content-center align-items-center">
-            <h1 class="fs-1 text-warning"><%= averageRating%>&#9733;</h1>
+            <h1 class="fs-1 text-warning"><%= averageRating%> <i class="fas fa-star"></i></h1>
           </div>
           <div class="col-6">
-            <div class="text-warning fs-4">	&#9733;&#9733;&#9733;&#9733;&#9733;<span class="text-dark fs-5"><%= ratioOfRating(5, campground.reviews) %>%</span></div>
-            <div class="text-warning fs-4">	&#9733;&#9733;&#9733;&#9733;&#9734;<span class="text-dark fs-5"><%= ratioOfRating(4, campground.reviews) %>%</span></div>
-            <div class="text-warning fs-4">	&#9733;&#9733;&#9733;&#9734;&#9734;<span class="text-dark fs-5"><%= ratioOfRating(3, campground.reviews) %>%</span></div>
-            <div class="text-warning fs-4">	&#9733;&#9733;&#9734;&#9734;&#9734;<span class="text-dark fs-5"><%= ratioOfRating(2, campground.reviews) %>%</span></div>
-            <div class="text-warning fs-4">	&#9733;&#9734;&#9734;&#9734;&#9734;<span class="text-dark fs-5"><%= ratioOfRating(1, campground.reviews) %>%</span></div>
+            <% for(let i = 5; i >=1; --i) { %> 
+              <h2 class="starability-result d-inline-block" data-rating="<%= i %>" ></h2> <h2 class="fs-2 d-inline"><%= ratioOfRating(i, campground.reviews) %>%</h2>
+            <% } %> 
           </div>
         </div>
-      </div>
       <!-- /Overview -->
 
       <!-- Add reviews -->
       <% if(currentUser){ %>
-        <form action="/campgrounds/<%= campground._id %>/reviews" method="POST" class="mb-3 validated-form" novalidate>
+        <form action="/<%= currentVersion %>/campgrounds/<%= campground._id %>/reviews" method="POST" class="mb-3 validated-form" novalidate>
           <h2>Leave a review</h2>
           <fieldset class="starability-basic">
             <input type="radio" id="no-rate" class="input-no-rate" name="review[rating]" value="1" checked
@@ -106,7 +103,7 @@
           </fieldset>
           <div class="input-group">
             <textarea class="form-control" name="review[body]" id="review" cols="30" rows="4" required></textarea>
-            <button type="submit" class="btn btn-outline-success"><i class="far fa-paper-plane"></i></button>
+            <button type="submit" class="btn btn-outline-success"><i class="fas fa-paper-plane"></i></button>
           </div>
         </form>
         <% } %>
@@ -115,7 +112,7 @@
         <!-- Search rating -->
         <div class="row mb-3">
           <div class="col-4">
-            <form action="/campgrounds/<%= campground._id %>" method="GET">
+            <form action="/<%= currentVersion %>/campgrounds/<%= campground._id %>" method="GET">
               <div class="input-group">
                 <select class="form-select" name="rating" aria-label="Example select with button addon">
                   <option value=""> All reviews</option>
@@ -142,7 +139,7 @@
               <h5 class="starability-result card-title" data-rating="<%= review.rating %>"></h5>
               <p class="card-text"><%= review.body %></p>
               <% if(currentUser && currentUser._id.equals(review.author._id)) { %>
-                <form action="/campgrounds/<%= campground._id %>/reviews/<%= review._id %>?_method=DELETE"
+                <form action="/<%= currentVersion %>/campgrounds/<%= campground._id %>/reviews/<%= review._id %>?_method=DELETE"
                   method="POST">
                   <button type="submit" class="btn btn-outline-danger btn-sm"><i class="far fa-trash-alt"></i> Delete reviews</button>
                 </form>
@@ -150,7 +147,7 @@
             </div>
           </div>
           <% } %>
-          <!-- /Reviews -->
+          <!-- /Reviews --> 
     </div>
   </div>
 

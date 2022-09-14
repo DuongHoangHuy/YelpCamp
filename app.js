@@ -56,13 +56,10 @@ app.use((req, res, next)=>{
     next()
 })
 
-app.get('/', (req, res)=>{
-    res.render('home.ejs')
-})
+app.locals.currentVersion = process.env.CURRENT_VERSION
+app.use(`/${app.locals.currentVersion}`, v1Router)
 
-app.use('/v1', v1Router)
-
-//__________________ERROR HANDLER_________________
+//ERROR HANDLER
 app.all('*', (req, res)=>{
     throw new ExpressError('Page not found', 404)
 })
